@@ -28,7 +28,7 @@ jobs:
       #          "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
         - name: sonar code quality
           run: |
-           mvn clean verify sonar:sonar \
+           mvn clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar \
             -Dsonar.projectKey=train-ticket \
             -Dsonar.host.url="${{ secrets.SONAR_HOST }}" \
             -Dsonar.login="${{ secrets.SONAR_TOKEN }}"
