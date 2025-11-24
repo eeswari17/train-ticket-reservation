@@ -27,5 +27,9 @@ jobs:
        #           -T target/TrainBook-1.0.0-SNAPSHOT.war \
         #          "http://${{ secrets.TOMCAT_HOST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
 
-      
-     
+        - name: sonar code quality
+          run: |
+           mvn clean verify sonar:sonar \
+            -Dsonar.projectKey=train-ticket \
+            -Dsonar.host.url="${{ secrets.SONAR_HOST }}"
+            -Dsonar.login="${{ secrets.SONAR_TOKEN }}"
