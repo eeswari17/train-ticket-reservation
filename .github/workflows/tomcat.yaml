@@ -31,3 +31,32 @@ jobs:
            curl -v -u ${{ secrets.TOMCAT_USER_DEV }}:${{ secrets.TOMCAT_PASSWORD_DEV }} \
             -T target/TrainBook-1.0.0-SNAPSHOT.war \
            "http://${{ secrets.TOMCAT_HOST_DEV }}:8080/manager/text/deploy?path=/TrainBook&update=true"
+    #  Deploy to the tester environment
+  deploy-test:
+           runs-on: ubuntu-latest
+           needs: deploy-dev
+           environment: TEST
+           steps:
+      # 1. Checkout the source code
+             - name: Checkout code
+               uses: actions/checkout@v3
+
+      # 2. Set up the Java environment
+             - name: Setup JDK
+               uses: actions/setup-java@v3
+               with:
+                distribution: 'temurin'
+                java-version: '17'
+          
+      # 3. Build and Test the application
+      # We use 'clean install -DskipTests' to build, and then run tests separately.
+      # However, since you are running validation, compile, test, and package separately, 
+      # we can combine them into a single command for efficiency.
+             - name: Build and Package WAR
+               run: mvn clean package -DskipTests
+      
+             - name: Deploy to TEST Tomcat
+               run: |
+                  curl -v -u ${{ secrets.TOMCAT_USER_TEST }}:${{ secrets.TOMCAT_PASSWORD_TEST }} \
+                  -T target/TrainBook-1.0.0-SNAPSHOT.war \
+                  "http://${{ secrets.TOMCAT_HOST_TEST }}:8080/manager/text/deploy?path=/TrainBook&update=true"
